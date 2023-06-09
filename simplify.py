@@ -4,16 +4,6 @@ from functools import reduce
 import operator
 import sys
 
-def printfun(x):
-    def wrap(*args, **kwargs):
-        result = x(*args, **kwargs)
-        if len(kwargs) > 0:
-            print(f"called {x.__name__}({args}, {kwargs}) => {result}")
-        else:
-            print(f"called {x.__name__}({args}) => {result}")
-        return result
-    return wrap
-
 def isnumeric(x):
     if isinstance(x, int):
         return True
@@ -22,6 +12,14 @@ def isnumeric(x):
     return False
 
 def simplify(equation):
+    s = simplifyStep(equation)
+    s2 = simplifyStep(s)
+    while s2 != s:
+        s = s2
+        s2 = simplifyStep(s)
+    return s
+
+def simplifyStep(equation):
     match equation:
         case [x]:
             return x
@@ -61,8 +59,6 @@ def simplify(equation):
                 return ['*'] + newrest
             else:
                 return newrest
-        case ['+', ['*', t1, var], ['*', t2, var]]:
-            return ['*', term] + terms
         case ['-', term, ['+', *terms]]:
             return ['-', term] + terms
         case ['*', fact, ['+', *terms]]:
@@ -97,12 +93,7 @@ def tostr(equation):
 
 def simplifyAndPrint(equation):
     s = simplify(equation)
-    s2 = simplify(s)
-    while s2 != s:
-        s = s2
-        s2 = simplify(s)
 
-    #print(repr(equation) + '=' + repr(s))
     print(tostr(equation) + '=' + tostr(s))
 
 # get one token from s starting at position n.
