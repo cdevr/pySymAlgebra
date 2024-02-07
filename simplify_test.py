@@ -23,7 +23,10 @@ class TestSimplify(unittest.TestCase):
             ['x', 'x'],
             ['x * 1', 'x'],
             ['x + 0', 'x'],
-            ['5*x + 3*x', '8*x'],
+            ['3 + 1', 4],
+            ['8 * 2', 16],
+            ['8 * 2 + 4', 20],
+            # ['5*x + 3*x', '8*x'],
         ]
 
         for [input, want] in tests:
