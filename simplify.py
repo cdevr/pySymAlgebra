@@ -43,7 +43,7 @@ def simplifyStep(equation):
                 return ['*', other, product]
             else:
                 return product
-        # Remove + 0.
+        # Remove + 0. (remove all zeros from a sum expression)
         case ['+', *rest] if 0 in rest:
             newrest = [x for x in rest if x != 0]
             if len(newrest) > 1:
@@ -64,6 +64,7 @@ def simplifyStep(equation):
                 return ['*'] + newrest
             else:
                 return newrest
+        # a - (b + c) = a - b - c.
         case ['-', term, ['+', *terms]]:
             return ['-', term] + terms
         case ['*', fact, ['+', *terms]]:
