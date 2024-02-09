@@ -23,6 +23,7 @@ def simplifyStep(equation):
     match equation:
         case [x]:
             return x
+        # Coalesce sum expressions.
         case ['+', *rest] if len(list([x for x in rest if isnumeric(x)])) > 1:
             numerics = [x for x in rest if isnumeric(x)]
             other = [x for x in rest if not isnumeric(x) ]
@@ -32,6 +33,7 @@ def simplifyStep(equation):
                 return ['+', other, total]
             else:
                 return total
+        # Coalesce products.
         case ['*', *rest] if len(list([x for x in rest if isnumeric(x)])) > 1:
             numerics = [x for x in rest if isnumeric(x)]
             other = [x for x in rest if not isnumeric(x) ]
@@ -41,18 +43,21 @@ def simplifyStep(equation):
                 return ['*', other, product]
             else:
                 return product
+        # Remove + 0.
         case ['+', *rest] if 0 in rest:
             newrest = [x for x in rest if x != 0]
             if len(newrest) > 1:
                 return ['+'] + newrest
             else:
                 return newrest
+        # Remove - 0.
         case ['-', *rest] if 0 in rest:
             newrest = [x for x in rest if x != 0]
             if len(newrest) > 1:
                 return ['-'] + newrest
             else:
                 return newrest
+        # Remove * 1.
         case ['*', *rest] if 1 in rest:
             newrest = [x for x in rest if x != 1]
             if len(newrest) > 1:
@@ -65,10 +70,13 @@ def simplifyStep(equation):
             return ['+'] + [['*', fact, term] for term in terms]
         case ['*', fact, ['-', *terms]]:
             return ['-'] + [['*', fact, term] for term in terms]
+        # (a + b) * c = a * c + b * c
         case ['*', ['+', term1, term2], fact]:
             return ['+', ['*', fact, term1], ['*', fact, term2]]
+        # a * (b * c) to a * b * c.
         case ['*', term, ['*', *terms]]:
             return ['*'] + [term] + terms
+        # a + (b + c) to a + b + c.
         case ['+', term, ['+', *terms]]:
             return ['+'] + [term] + terms
         case [op, *rest]:
