@@ -67,13 +67,19 @@ def simplifyStep(equation):
         # a - (b + c) = a - b - c.
         case ['-', term, ['+', *terms]]:
             return ['-', term] + terms
+        # (a + b) * c = a * c + b * c
         case ['*', fact, ['+', *terms]]:
+            # But first, try to simplify the sum.
+            maybe_simpler = simplifyStep(['+', *terms])
+            if maybe_simpler != ['+', *terms]:
+                return ['*', maybe_simpler, fact]
             return ['+'] + [['*', fact, term] for term in terms]
         case ['*', fact, ['-', *terms]]:
+            # But first, try to simplify the sum.
+            maybe_simpler = simplifyStep(['+', *terms])
+            if maybe_simpler != ['+', *terms]:
+                return ['*', maybe_simpler, fact]
             return ['-'] + [['*', fact, term] for term in terms]
-        # (a + b) * c = a * c + b * c
-        case ['*', ['+', term1, term2], fact]:
-            return ['+', ['*', fact, term1], ['*', fact, term2]]
         # a * (b * c) to a * b * c.
         case ['*', term, ['*', *terms]]:
             return ['*'] + [term] + terms

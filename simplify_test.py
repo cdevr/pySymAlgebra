@@ -24,16 +24,17 @@ class TestSimplify(unittest.TestCase):
             ['x', 'x'],
             ['x * 1', 'x'],
             ['x + 0', 'x'],
-            ['3 + 1', 4],
-            ['8 * 2', 16],
-            ['8 * 2 + 4', 20],
-            ['8 * (2 + 4)', 48],
-            ['a - (b + c)', ['-', 'a', 'b', 'c']],
+            ['3 + 1', '4'],
+            ['8 * 2', '16'],
+            ['8 * 2 + 4', '20'],
+            ['8 * (2 + 4)', '48'],
+            ['a - (b + c)', 'a-b-c'],
+            ['x * (3 + 2)', '5*x'],
             # ['5*x + 3*x', '8*x'],
         ]
 
         for [input, want] in tests:
-            got = simplify.simplify(simplify.compile(input))
+            got = simplify.tostr(simplify.simplify(simplify.compile(input)))
 
             print(f'{input=} {got=} {want=}')
             self.assertEqual(got, want)
